@@ -23,8 +23,8 @@ yarn-debug.log*
 yarn-error.log*
 
 .idea/
+.env
 
 # firebase
 .firebase/
 .firebaserc
-src/firebase.js

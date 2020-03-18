@@ -9,7 +9,6 @@ const movieId = document.getElementById("Movie_id").innerHTML;
 const userId = document.getElementById("user_id").innerHTML;
 
 const messagesRef = firebaseDb.ref(`movie_${movieId}`);
-
 class AppChat extends Component {
   constructor(props) {
     super(props);
@@ -115,7 +114,6 @@ class AppChat extends Component {
       }, function() {
         this.scrollFunc();
       });
-      console.log(this.myRef.current.offsetHeight)
     })
   }
 
