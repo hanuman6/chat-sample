@@ -1,20 +1,10 @@
 import React from "react";
-import Avatar from 'material-ui/Avatar';
-import List from 'material-ui/List/List';
-import ListItem from 'material-ui/List/ListItem';
-import Chip from 'material-ui/Chip';
-
-const styles = {
-    chip: {
-        margin: 4,
-        alignItems: 'flexEnd'
-
-    },
-    wrapper: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-};
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Divider from '@material-ui/core/Divider';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
 
 export default class Message extends React.Component {
     render() {
@@ -23,15 +13,16 @@ export default class Message extends React.Component {
         return (
             <div className={props.message.user_id === userSessionId ? 'Message' : 'Message other'}>
                 <List>
-                    <ListItem disabled>
-                        <Avatar className="" src={props.message.profile_image} />
-                        <span style={{marginBottom: -5}}>@{props.message.user_name}</span>
-                        <div className="">
-                            <Chip style={styles.chip} >
-                                {props.message.text}
-                            </Chip>
-                        </div>
+                    <ListItem alignItems="flex-start">
+                        <ListItemAvatar>
+                            <Avatar className={`color${Math.floor(Math.random()*5)}`}>{props.message.user_name.slice(0,1)}</Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={props.message.user_name}
+                            secondary={props.message.text}
+                        />
                     </ListItem>
+                    <Divider variant="inset" component="li" />
                 </List>
             </div>
         );

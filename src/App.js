@@ -4,6 +4,9 @@ import { firebaseDb } from './firebase'
 import Message from './component/Message'
 import ChatBox from './component/ChatBox'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import axios from 'axios';
+
+const NG_ENDPOINT = '/ng.json';
 
 const movieId = document.getElementById("Movie_id").innerHTML;
 const userId = document.getElementById("user_id").innerHTML;
@@ -16,11 +19,12 @@ class AppChat extends Component {
     this.onButtonClick = this.onButtonClick.bind(this);
     this.state = {
       user_id: userId,
-      text : "",
+      text: "",
       user_name: sessionStorage.getItem('user_name'),
       profile_image: "",
-      messages : [],
+      messages: [],
       height: "",
+      ngWords: "",
     };
     this.myRef = React.createRef();
     this.myRef2 = React.createRef();
@@ -64,6 +68,23 @@ class AppChat extends Component {
     }
   }
 
+  // NGリストをStateに保持
+  checkNG() {
+    axios
+      .get(NG_ENDPOINT)
+      .then((results) => {
+          const data = results.data;
+          const wordList = data.join('|');
+          this.setState({
+            ngWords: wordList
+          })
+        },
+      )
+      .catch(() => {
+        console.log('APIエラー');
+      });
+  }
+
   // ランダム画像
   randomImage() {
     let rand = Math.floor(Math.random()*1000) ;
@@ -73,19 +94,26 @@ class AppChat extends Component {
 
   // クリック時のバリデーションとFirebaseに保存
   onButtonClick() {
+    // NGワードチェックと必須バリデーション
+    const NG_WORDS = new RegExp(this.state.ngWords);
     if(this.state.user_name === "") {
       alert('お名前を入力してください');
       return
     } else if(this.state.text === "") {
       alert('メッセージを入力してください');
       return
+    } else if(NG_WORDS.test(this.state.user_name) || NG_WORDS.test(this.state.text)) {
+      alert('不適切な文字が含まれています');
+      return
     }
+    // DB保存
     messagesRef.push({
       "user_id" : this.state.user_id,
       "user_name" : this.state.user_name,
-      "profile_image" : this.randomImage(),
+      "profile_image" : "this.randomImage()",
       "text" : this.state.text,
     });
+    // Session保存
     sessionStorage.setItem('user_name', this.state.user_name);
     this.setState({
       "text": "",
@@ -95,6 +123,10 @@ class AppChat extends Component {
   // 投稿時に最新にスクロール
   scrollFunc() {
     this.myRef2.current.scrollTo(0, this.state.height);
+  }
+
+  componentDidMount() {
+    this.checkNG();
   }
 
   componentWillMount() {
